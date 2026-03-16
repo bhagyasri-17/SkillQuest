@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game Lab – SkillQuest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+      --border: rgba(255,255,255,0.07); --text: #f0eff5; --muted: #8b8a9b;
+      --purple: #a78bfa; --blue: #60a5fa; --green: #4ade80; --orange: #f97316; --red: #f87171;
+      --font-d: 'Syne', sans-serif; --font-b: 'DM Sans', sans-serif; --font-m: 'JetBrains Mono', monospace;
+      --r: 16px; --rs: 10px;
+    }
+    body { font-family: var(--font-b); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    .navbar { display:flex; align-items:center; justify-content:space-between; padding:1.2rem 4rem; position:sticky; top:0; z-index:100; background:rgba(10,10,15,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:var(--font-d); font-size:1.5rem; font-weight:800; text-decoration:none; color:var(--text); }
+    .nav-logo span { color:#e8d5b0; }
+    .nav-links { display:flex; gap:2rem; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:0.9rem; font-weight:500; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--text); }
+
+    .page-header { padding:3rem 4rem 2rem; border-bottom:1px solid var(--border); }
+    .back-link { display:inline-flex; align-items:center; gap:0.5rem; color:var(--muted); text-decoration:none; font-size:0.85rem; margin-bottom:1.2rem; transition:color 0.2s; }
+    .back-link:hover { color:var(--text); }
+    .page-header h1 { font-family:var(--font-d); font-size:clamp(2rem,4vw,3rem); font-weight:800; letter-spacing:-1px; }
+    .page-header p { color:var(--muted); margin-top:0.4rem; }
+
+    /* GAME HUB */
+    .game-hub { padding:2.5rem 4rem 5rem; }
+    .slabel { font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:1rem; }
+
+    .games-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.4rem; }
+
+    .game-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+      overflow:hidden; cursor:pointer;
+      transition:transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      animation:fadeUp 0.5s ease both;
+    }
+    .game-card:nth-child(1){animation-delay:.05s} .game-card:nth-child(2){animation-delay:.1s}
+    .game-card:nth-child(3){animation-delay:.15s} .game-card:nth-child(4){animation-delay:.2s}
+    .game-card:hover { transform:translateY(-4px); }
+    .gc-purple:hover { border-color:rgba(167,139,250,.4); box-shadow:0 8px 40px rgba(167,139,250,.1); }
+    .gc-blue:hover   { border-color:rgba(96,165,250,.4);  box-shadow:0 8px 40px rgba(96,165,250,.1);  }
+    .gc-green:hover  { border-color:rgba(74,222,128,.4);  box-shadow:0 8px 40px rgba(74,222,128,.1);  }
+    .gc-orange:hover { border-color:rgba(249,115,22,.4);  box-shadow:0 8px 40px rgba(249,115,22,.1);  }
+
+    .gc-banner {
+      height:130px; display:flex; align-items:center; justify-content:center;
+      font-size:3.5rem; letter-spacing:0.1em;
+    }
+    .gc-purple .gc-banner { background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(139,92,246,.18)); }
+    .gc-blue   .gc-banner { background:linear-gradient(135deg,rgba(96,165,250,.08),rgba(59,130,246,.18));  }
+    .gc-green  .gc-banner { background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(34,197,94,.18));   }
+    .gc-orange .gc-banner { background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(234,88,12,.18));   }
+
+    .gc-info { padding:1.2rem 1.5rem 1.4rem; }
+    .gc-info h3 { font-family:var(--font-d); font-size:1.05rem; font-weight:700; }
+    .gc-info p  { font-size:0.83rem; color:var(--muted); margin-top:0.3rem; line-height:1.55; }
+    .gc-tag { display:inline-block; margin-top:0.8rem; font-size:0.68rem; padding:0.2rem 0.65rem; border-radius:999px; font-weight:600; }
+    .gc-purple .gc-tag { background:rgba(167,139,250,.12); color:var(--purple); }
+    .gc-blue   .gc-tag { background:rgba(96,165,250,.12);  color:var(--blue);   }
+    .gc-green  .gc-tag { background:rgba(74,222,128,.12);  color:var(--green);  }
+    .gc-orange .gc-tag { background:rgba(249,115,22,.12);  color:var(--orange); }
+    .gc-play { float:right; margin-top:0.6rem; font-size:0.75rem; font-weight:700; font-family:var(--font-d); }
+    .gc-purple .gc-play{color:var(--purple)} .gc-blue .gc-play{color:var(--blue)}
+    .gc-green  .gc-play{color:var(--green)}  .gc-orange .gc-play{color:var(--orange)}
+
+    /* MODAL */
+    .overlay { position:fixed; inset:0; z-index:1000; background:rgba(5,5,10,.93); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; padding:1.5rem; }
+    .overlay.open { display:flex; animation:fadeIn .2s ease; }
+    .modal { background:var(--surface); border:1px solid rgba(255,255,255,.1); border-radius:20px; width:100%; max-width:700px; max-height:90vh; overflow-y:auto; animation:slideUp .3s ease; }
+    .mhead { display:flex; align-items:center; justify-content:space-between; padding:1.3rem 1.8rem; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:10; }
+    .mhead h2 { font-family:var(--font-d); font-size:1.1rem; font-weight:800; }
+    .mclose { width:32px; height:32px; border-radius:50%; background:var(--surface2); border:1px solid var(--border); cursor:pointer; color:var(--muted); font-size:0.9rem; display:flex; align-items:center; justify-content:center; transition:color .2s; }
+    .mclose:hover { color:var(--text); }
+    .mbody { padding:1.8rem; }
+
+    /* SHARED GAME ELEMENTS */
+    .btn { display:inline-flex; align-items:center; gap:.4rem; padding:.65rem 1.4rem; border-radius:var(--rs); font-family:var(--font-d); font-size:.88rem; font-weight:700; cursor:pointer; border:none; transition:opacity .2s, transform .15s; }
+    .btn:hover:not(:disabled) { opacity:.85; transform:translateY(-1px); }
+    .btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+    .btn-purple{background:var(--purple);color:#0a0a0f} .btn-blue{background:var(--blue);color:#0a0a0f}
+    .btn-green{background:var(--green);color:#0a0a0f}   .btn-orange{background:var(--orange);color:#0a0a0f}
+    .btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+    .btn-red{background:var(--red);color:#0a0a0f}
+
+    .score-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.4rem; }
+    .score-pill { background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:.3rem .9rem; font-size:.8rem; font-family:var(--font-m); }
+
+    .teach-box { background:var(--surface2); border-left:3px solid var(--purple); border-radius:var(--rs); padding:1rem 1.2rem; margin-bottom:1.4rem; font-size:.84rem; color:var(--muted); line-height:1.7; }
+    .teach-box strong { color:var(--text); display:block; margin-bottom:.3rem; }
+
+    .feedback { text-align:center; padding:1rem; border-radius:var(--rs); font-size:1rem; font-weight:700; margin-top:1rem; display:none; animation:popIn .3s ease; }
+    .feedback.correct { background:rgba(74,222,128,.12); border:1px solid rgba(74,222,128,.3); color:var(--green); display:block; }
+    .feedback.wrong   { background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.3); color:var(--red);   display:block; }
+
+    /* GAME 1 – DATA TYPE BUCKETS */
+    .value-display { text-align:center; margin:1.5rem 0 .8rem; }
+    .big-value { display:inline-block; background:#0d0d14; border:2px solid var(--purple); border-radius:14px; padding:.8rem 2rem; font-family:var(--font-m); font-size:1.6rem; font-weight:500; color:var(--purple); animation:popIn .35s ease; }
+    .buckets { display:grid; grid-template-columns:repeat(2,1fr); gap:.8rem; margin-top:1.2rem; }
+    .bucket { background:var(--surface2); border:2px solid var(--border); border-radius:var(--r); padding:1.2rem; text-align:center; cursor:pointer; transition:all .2s; }
+    .bucket:hover { transform:scale(1.03); }
+    .bucket .b-emoji { font-size:2rem; margin-bottom:.4rem; }
+    .bucket .b-label { font-family:var(--font-d); font-size:.95rem; font-weight:700; }
+    .bucket .b-desc  { font-size:.75rem; color:var(--muted); margin-top:.2rem; }
+    .bucket.correct-pick { border-color:var(--green); background:rgba(74,222,128,.08); }
+    .bucket.wrong-pick   { border-color:var(--red);   background:rgba(248,113,113,.08); animation:shake .3s ease; }
+
+    /* GAME 2 – LOOP PREDICTOR */
+    .code-block { background:#0d0d14; border:1px solid var(--border); border-radius:var(--rs); padding:1.2rem 1.4rem; font-family:var(--font-m); font-size:.88rem; line-height:2; margin:1rem 0 1.2rem; }
+    .kw{color:#c084fc} .fn{color:#60a5fa} .num{color:#fb923c} .cm{color:#4b5563} .str{color:#86efac}
+    .answer-options { display:grid; grid-template-columns:repeat(2,1fr); gap:.8rem; }
+    .ans-btn { background:var(--surface2); border:2px solid var(--border); border-radius:var(--rs); padding:.9rem; text-align:center; cursor:pointer; font-family:var(--font-m); font-size:1rem; font-weight:600; transition:all .2s; }
+    .ans-btn:hover { border-color:var(--blue); }
+    .ans-btn.correct-ans { border-color:var(--green); background:rgba(74,222,128,.1); color:var(--green); }
+    .ans-btn.wrong-ans   { border-color:var(--red);   background:rgba(248,113,113,.1); color:var(--red);   }
+    .ans-btn.reveal-correct { border-color:var(--green); background:rgba(74,222,128,.08); }
+
+    /* GAME 3 – TRUE OR FALSE */
+    .statement-card { background:#0d0d14; border:1px solid var(--border); border-radius:var(--r); padding:2rem; text-align:center; margin:1rem 0 1.5rem; min-height:120px; display:flex; align-items:center; justify-content:center; }
+    .statement-text { font-size:1.05rem; line-height:1.6; font-weight:500; }
+    .tf-btns { display:flex; gap:1rem; justify-content:center; }
+    .tf-btn { flex:1; max-width:160px; padding:1rem; border-radius:var(--r); font-family:var(--font-d); font-size:1rem; font-weight:800; cursor:pointer; border:2px solid transparent; transition:all .2s; }
+    .tf-btn:hover { transform:scale(1.04); }
+    .tf-true  { background:rgba(74,222,128,.1);  border-color:rgba(74,222,128,.3);  color:var(--green); }
+    .tf-false { background:rgba(248,113,113,.1); border-color:rgba(248,113,113,.3); color:var(--red);   }
+    .tf-true:hover  { background:rgba(74,222,128,.2); }
+    .tf-false:hover { background:rgba(248,113,113,.2); }
+    .explain-box { background:var(--surface2); border-radius:var(--rs); padding:1rem 1.2rem; margin-top:1rem; font-size:.84rem; color:var(--muted); line-height:1.65; display:none; animation:fadeIn .3s ease; }
+    .explain-box.show { display:block; }
+
+    /* GAME 4 – BUG HUNT */
+    .buggy-code { background:#0d0d14; border:2px solid rgba(248,113,113,.3); border-radius:var(--rs); padding:1.2rem 1.4rem; font-family:var(--font-m); font-size:.88rem; line-height:2; margin:1rem 0; position:relative; }
+    .bug-label { position:absolute; top:-10px; right:12px; background:#f87171; color:#0a0a0f; font-size:.65rem; font-weight:700; padding:.15rem .55rem; border-radius:999px; letter-spacing:.5px; }
+    .fix-options { display:flex; flex-direction:column; gap:.7rem; margin-top:1rem; }
+    .fix-btn { background:var(--surface2); border:2px solid var(--border); border-radius:var(--rs); padding:.85rem 1.1rem; text-align:left; cursor:pointer; font-family:var(--font-m); font-size:.82rem; transition:all .2s; display:flex; align-items:center; gap:.7rem; }
+    .fix-btn:hover { border-color:var(--orange); }
+    .fix-btn.correct-fix { border-color:var(--green); background:rgba(74,222,128,.08); }
+    .fix-btn.wrong-fix   { border-color:var(--red);   background:rgba(248,113,113,.08); }
+    .fix-letter { width:24px; height:24px; min-width:24px; border-radius:6px; background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; }
+
+    /* FOOTER */
+    .footer { text-align:center; padding:2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.82rem; }
+
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+    @keyframes popIn   { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
+    @keyframes shake   { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+    @media(max-width:768px){
+      .navbar{padding:1rem 1.5rem} .page-header,.game-hub{padding-left:1.5rem;padding-right:1.5rem}
+      .games-grid{grid-template-columns:1fr} .buckets,.answer-options{grid-template-columns:1fr}
+      .modal{max-height:96vh} .mbody{padding:1.2rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">Skill<span>Quest</span></a>
+  <div class="nav-links">
+    <a href="grades.html">Grades</a>
+    <a href="skills.html">Skills</a>
+    <a href="internships.html">Internships</a>
+    <a href="gamelearn.html" style="color:#a78bfa">Game Lab</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  <h1>Game <span style="color:#a78bfa">Lab</span></h1>
+  <p>Pick a game, learn something new — no prior knowledge needed.</p>
+</div>
+
+<div class="game-hub">
+  <div class="slabel">▶ Play Now</div>
+  <div class="games-grid">
+
+    <div class="game-card gc-purple" onclick="openGame('types')">
+      <div class="gc-banner">🔢  📝  ✅</div>
+      <div class="gc-info">
+        <h3>What's My Type?</h3>
+        <p>A value pops up — you drop it into the right data type bucket. Beginner-friendly intro to how computers store information.</p>
+        <span class="gc-tag">Data Types</span>
+        <span class="gc-play">Play ↗</span>
+      </div>
+    </div>
+
+    <div class="game-card gc-blue" onclick="openGame('loop')">
+      <div class="gc-banner">🔁  ❓</div>
+      <div class="gc-info">
+        <h3>Loop Predictor</h3>
+        <p>Read a short loop and predict what it prints before the answer is revealed. Trains you to think like a computer.</p>
+        <span class="gc-tag">Loops &amp; Logic</span>
+        <span class="gc-play">Play ↗</span>
+      </div>
+    </div>
+
+    <div class="game-card gc-green" onclick="openGame('tf')">
+      <div class="gc-banner">✅  ❌</div>
+      <div class="gc-info">
+        <h3>True or False?</h3>
+        <p>CS concept flashcards — is the statement true or false? Each answer teaches you something with a short explanation.</p>
+        <span class="gc-tag">CS Concepts</span>
+        <span class="gc-play">Play ↗</span>
+      </div>
+    </div>
+
+    <div class="game-card gc-orange" onclick="openGame('bug')">
+      <div class="gc-banner">🐛  🔍</div>
+      <div class="gc-info">
+        <h3>Spot the Bug</h3>
+        <p>A short piece of code has one mistake. Can you find it? Pick the correct fix and learn why the bug happens.</p>
+        <span class="gc-tag">Debugging</span>
+        <span class="gc-play">Play ↗</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:3rem; padding:1.5rem 2rem; background:var(--surface); border:1px dashed rgba(255,255,255,0.08); border-radius:var(--r); text-align:center;">
+    <div style="font-size:1.8rem;margin-bottom:.6rem">🚧</div>
+    <div style="font-family:var(--font-d);font-weight:700;font-size:1rem;margin-bottom:.3rem">More games coming soon</div>
+    <div style="color:var(--muted);font-size:.85rem">We're building more interactive games. Check back later!</div>
+  </div>
+</div>
+
+<footer class="footer">SkillQuest • Built for students, by students</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="handleBg(event)">
+  <div class="modal" id="modalBox">
+    <div class="mhead">
+      <h2 id="mTitle">Game</h2>
+      <button class="mclose" onclick="closeGame()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mbody" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+function openGame(t){ document.getElementById('overlay').classList.add('open'); document.body.style.overflow='hidden'; const g={types:initTypes,loop:initLoop,tf:initTF,bug:initBug}; g[t](); }
+function closeGame(){ document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }
+function handleBg(e){ if(e.target===document.getElementById('overlay')) closeGame(); }
+function $(id){ return document.getElementById(id); }
+
+
+// ══════════════════════════════════════════════════════
+// GAME 1 — WHAT'S MY TYPE?
+// ══════════════════════════════════════════════════════
+function initTypes(){
+  $('mTitle').textContent = '🔢 What\'s My Type?';
+
+  const QUESTIONS = [
+    { value: '42',         type: 'Integer',  hint: 'A whole number with no decimal point.' },
+    { value: '"Hello"',    type: 'String',   hint: 'Text wrapped in quotes is always a String.' },
+    { value: 'true',       type: 'Boolean',  hint: 'true/false are Boolean values — they represent yes or no.' },
+    { value: '3.14',       type: 'Float',    hint: 'Numbers with a decimal point are Floats (or doubles).' },
+    { value: '"A"',        type: 'String',   hint: 'Even a single character in quotes is a String.' },
+    { value: '0',          type: 'Integer',  hint: 'Zero is a whole number — still an Integer!' },
+    { value: 'false',      type: 'Boolean',  hint: 'false is the other Boolean value alongside true.' },
+    { value: '-7',         type: 'Integer',  hint: 'Negative whole numbers are still Integers.' },
+    { value: '"123"',      type: 'String',   hint: 'Quotes make it a String, even if it looks like a number.' },
+    { value: '0.001',      type: 'Float',    hint: 'Any number with a decimal is a Float.' },
+    { value: '"false"',    type: 'String',   hint: 'Quotes make it a String — not a Boolean!' },
+    { value: '100',        type: 'Integer',  hint: 'Whole number, no decimal → Integer.' },
+  ];
+
+  const BUCKETS = [
+    { type:'Integer', emoji:'🔢', desc:'Whole numbers like 1, 42, -7' },
+    { type:'String',  emoji:'📝', desc:'Text in quotes like "hello"' },
+    { type:'Boolean', emoji:'✅', desc:'Only true or false' },
+    { type:'Float',   emoji:'💧', desc:'Decimal numbers like 3.14' },
+  ];
+
+  let qi=0, score=0, answered=false;
+
+  function shuffle(a){ return a.sort(()=>Math.random()-.5); }
+  const Qs = shuffle([...QUESTIONS]);
+
+  function render(){
+    if(qi>=Qs.length){ showEnd(); return; }
+    const q=Qs[qi];
+    $('mBody').innerHTML=`
+      <div class="teach-box">
+        <strong>📖 What are Data Types?</strong>
+        Every value in programming has a <em>type</em> — it tells the computer what kind of data it is and what it can do with it. Drop the value into the correct bucket!
+      </div>
+      <div class="score-row">
+        <span class="score-pill">Score: ${score} / ${Qs.length}</span>
+        <span class="score-pill">Question ${qi+1} of ${Qs.length}</span>
+      </div>
+      <div class="value-display">
+        <div class="big-value">${q.value}</div>
+      </div>
+      <p style="text-align:center;color:var(--muted);font-size:.83rem;margin-bottom:.5rem">What data type is this?</p>
+      <div class="buckets">
+        ${BUCKETS.map(b=>`
+          <div class="bucket" id="bucket-${b.type}" onclick="window.__tPick('${b.type}')">
+            <div class="b-emoji">${b.emoji}</div>
+            <div class="b-label">${b.type}</div>
+            <div class="b-desc">${b.desc}</div>
+          </div>`).join('')}
+      </div>
+      <div class="feedback" id="tfb"></div>
+      <div id="hint-box" style="display:none;background:var(--surface2);border-radius:var(--rs);padding:.9rem 1.1rem;margin-top:1rem;font-size:.83rem;color:var(--muted);animation:fadeIn .3s ease">
+        💡 ${q.hint}
+      </div>
+      <div style="text-align:right;margin-top:1rem">
+        <button class="btn btn-ghost" id="nextBtn" onclick="window.__tNext()" style="display:none">Next →</button>
+      </div>
+    `;
+    answered=false;
+  }
+
+  window.__tPick = (chosen)=>{
+    if(answered) return;
+    answered=true;
+    const correct=Qs[qi].type;
+    const fb=$('tfb');
+    if(chosen===correct){
+      score++;
+      $(`bucket-${chosen}`).classList.add('correct-pick');
+      fb.className='feedback correct'; fb.textContent='✅ Correct!';
+    } else {
+      $(`bucket-${chosen}`).classList.add('wrong-pick');
+      $(`bucket-${correct}`).classList.add('correct-pick');
+      fb.className='feedback wrong'; fb.textContent=`❌ Not quite — it's a ${correct}`;
+    }
+    $('hint-box').style.display='block';
+    $('nextBtn').style.display='inline-flex';
+  };
+
+  window.__tNext = ()=>{ qi++; render(); };
+
+  function showEnd(){
+    $('mBody').innerHTML=`
+      <div style="text-align:center;padding:2rem 1rem">
+        <div style="font-size:4rem;margin-bottom:1rem">${score>=Qs.length*.8?'🏆':score>=Qs.length*.5?'👍':'💪'}</div>
+        <h2 style="font-family:var(--font-d);font-size:1.6rem;font-weight:800;margin-bottom:.5rem">You scored ${score} / ${Qs.length}!</h2>
+        <p style="color:var(--muted);margin-bottom:2rem">${score===Qs.length?'Perfect! You really know your types.':score>=8?'Great job — almost there!':'Keep practicing — you\'ll get it!'}</p>
+        <button class="btn btn-purple" onclick="initTypes()">Play Again</button>
+        <button class="btn btn-ghost" onclick="closeGame()" style="margin-left:.8rem">Close</button>
+      </div>`;
+  }
+
+  render();
+}
+
+
+// ══════════════════════════════════════════════════════
+// GAME 2 — LOOP PREDICTOR
+// ══════════════════════════════════════════════════════
+function initLoop(){
+  $('mTitle').textContent='🔁 Loop Predictor';
+
+  const QUESTIONS=[
+    {
+      code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">3</span>):\n    print(i)`,
+      explanation:'range(3) gives 0, 1, 2 — it starts at 0 and stops BEFORE 3.',
+      options:['0 1 2','1 2 3','0 1 2 3','1 2'], answer:'0 1 2',
+    },
+    {
+      code:`x = <span class="num">1</span>\n<span class="kw">while</span> x &lt; <span class="num">4</span>:\n    print(x)\n    x = x + <span class="num">1</span>`,
+      explanation:'x starts at 1, prints while x < 4, so it prints 1, 2, 3. When x becomes 4 the condition is false.',
+      options:['1 2 3','1 2 3 4','0 1 2 3','1 2'],  answer:'1 2 3',
+    },
+    {
+      code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">2</span>, <span class="num">5</span>):\n    print(i)`,
+      explanation:'range(2, 5) starts at 2 and stops BEFORE 5 — giving 2, 3, 4.',
+      options:['2 3 4 5','2 3 4','1 2 3 4','2 3'], answer:'2 3 4',
+    },
+    {
+      code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">5</span>, <span class="num">0</span>, -<span class="num">1</span>):\n    print(i)`,
+      explanation:'range(5, 0, -1) counts DOWN from 5, stopping before 0: 5, 4, 3, 2, 1.',
+      options:['5 4 3 2 1 0','5 4 3 2 1','4 3 2 1','0 1 2 3 4 5'], answer:'5 4 3 2 1',
+    },
+    {
+      code:`total = <span class="num">0</span>\n<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">4</span>):\n    total = total + i\nprint(total)`,
+      explanation:'1+2+3 = 6. The loop adds each value to total: 0→1→3→6.',
+      options:['3','5','6','10'], answer:'6',
+    },
+    {
+      code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">4</span>):\n    <span class="kw">if</span> i == <span class="num">2</span>:\n        <span class="kw">break</span>\n    print(i)`,
+      explanation:'The loop stops when i equals 2 because of break. So only 0 and 1 are printed.',
+      options:['0 1 2','0 1','0 1 2 3','0'], answer:'0 1',
+    },
+  ];
+
+  let qi=0, score=0;
+
+  function render(){
+    if(qi>=QUESTIONS.length){ showEnd(); return; }
+    const q=QUESTIONS[qi];
+    $('mBody').innerHTML=`
+      <div class="teach-box">
+        <strong>📖 What is a Loop?</strong>
+        A loop repeats a block of code multiple times. <code style="color:var(--purple)">for</code> loops run a set number of times. <code style="color:var(--purple)">while</code> loops run as long as a condition is true. Read the code and guess what it prints!
+      </div>
+      <div class="score-row">
+        <span class="score-pill">Score: ${score} / ${QUESTIONS.length}</span>
+        <span class="score-pill">Question ${qi+1} of ${QUESTIONS.length}</span>
+      </div>
+      <p style="color:var(--muted);font-size:.83rem;margin-bottom:.3rem">What does this code print?</p>
+      <div class="code-block">${q.code}</div>
+      <div class="answer-options">
+        ${q.options.map(o=>`<div class="ans-btn" onclick="window.__lPick('${o}')">${o}</div>`).join('')}
+      </div>
+      <div class="explain-box" id="explainBox">💡 ${q.explanation}</div>
+      <div style="text-align:right;margin-top:1rem">
+        <button class="btn btn-ghost" id="nextBtn2" onclick="window.__lNext()" style="display:none">Next →</button>
+      </div>
+    `;
+  }
+
+  window.__lPick=(chosen)=>{
+    const correct=QUESTIONS[qi].answer;
+    document.querySelectorAll('.ans-btn').forEach(b=>b.onclick=null);
+    if(chosen===correct){
+      score++;
+      document.querySelectorAll('.ans-btn').forEach(b=>{ if(b.textContent===chosen) b.classList.add('correct-ans'); });
+    } else {
+      document.querySelectorAll('.ans-btn').forEach(b=>{
+        if(b.textContent===chosen)  b.classList.add('wrong-ans');
+        if(b.textContent===correct) b.classList.add('reveal-correct');
+      });
+    }
+    $('explainBox').classList.add('show');
+    $('nextBtn2').style.display='inline-flex';
+  };
+
+  window.__lNext=()=>{ qi++; render(); };
+
+  function showEnd(){
+    $('mBody').innerHTML=`
+      <div style="text-align:center;padding:2rem 1rem">
+        <div style="font-size:4rem;margin-bottom:1rem">${score>=QUESTIONS.length*.8?'🏆':score>=4?'👍':'💪'}</div>
+        <h2 style="font-family:var(--font-d);font-size:1.6rem;font-weight:800;margin-bottom:.5rem">You scored ${score} / ${QUESTIONS.length}!</h2>
+        <p style="color:var(--muted);margin-bottom:2rem">${score===QUESTIONS.length?'You think exactly like a computer!':score>=4?'Nice — loops are making sense!':'Loops take practice — try again!'}</p>
+        <button class="btn btn-blue" onclick="initLoop()">Play Again</button>
+        <button class="btn btn-ghost" onclick="closeGame()" style="margin-left:.8rem">Close</button>
+      </div>`;
+  }
+
+  render();
+}
+
+
+// ══════════════════════════════════════════════════════
+// GAME 3 — TRUE OR FALSE?
+// ══════════════════════════════════════════════════════
+function initTF(){
+  $('mTitle').textContent='✅ True or False?';
+
+  const CARDS=[
+    { s:'An array index starts at 1.',                                         a:false, e:'Arrays are zero-indexed — the first element is at index 0, not 1.' },
+    { s:'A function can return a value to the code that called it.',           a:true,  e:'Yes! Functions use return to send a result back to the caller.' },
+    { s:'An infinite loop stops automatically after 100 repetitions.',         a:false, e:'An infinite loop never stops on its own — it needs a break or condition to end.' },
+    { s:'Variables can store different values at different times.',            a:true,  e:'That\'s the point of a variable — its value can change as the program runs.' },
+    { s:'Python uses curly braces { } to define code blocks.',                a:false, e:'Python uses indentation (spaces/tabs) for code blocks — not curly braces like Java or C.' },
+    { s:'A String is used to store text.',                                     a:true,  e:'Correct! "Hello", "Alice", "123" — any text in quotes is a String.' },
+    { s:'A function must always return a value.',                              a:false, e:'Functions can return void/None — meaning they do something but return nothing.' },
+    { s:'If (false) { } — the code inside will never run.',                   a:true,  e:'Correct! An if block only runs when the condition is true. false means skip it.' },
+    { s:'You can have a loop inside another loop.',                            a:true,  e:'Yes — these are called nested loops. They\'re useful for working with grids or tables.' },
+    { s:'Compiled languages are always slower than interpreted languages.',   a:false, e:'Usually the opposite — compiled languages (like C) are typically faster than interpreted ones (like Python).' },
+    { s:'// is used for comments in Python.',                                  a:false, e:'Python uses # for comments. // is used in languages like Java, C, and JavaScript.' },
+    { s:'An if-else always needs an else branch.',                             a:false, e:'Else is optional — you can have just an if block by itself.' },
+  ];
+
+  let qi=0, score=0;
+  const Qs=[...CARDS].sort(()=>Math.random()-.5);
+
+  function render(){
+    if(qi>=Qs.length){ showEnd(); return; }
+    const q=Qs[qi];
+    $('mBody').innerHTML=`
+      <div class="teach-box">
+        <strong>📖 CS Concept Check</strong>
+        Read the statement carefully and decide — is it <span style="color:var(--green)">True</span> or <span style="color:var(--red)">False</span>? Each answer comes with an explanation so you learn either way!
+      </div>
+      <div class="score-row">
+        <span class="score-pill">Score: ${score} / ${Qs.length}</span>
+        <span class="score-pill">Card ${qi+1} of ${Qs.length}</span>
+      </div>
+      <div class="statement-card">
+        <div class="statement-text">${q.s}</div>
+      </div>
+      <div class="tf-btns">
+        <button class="tf-btn tf-true"  onclick="window.__tfPick(true)">✅ True</button>
+        <button class="tf-btn tf-false" onclick="window.__tfPick(false)">❌ False</button>
+      </div>
+      <div class="explain-box" id="explainTF">💡 ${q.e}</div>
+      <div style="text-align:right;margin-top:1rem">
+        <button class="btn btn-ghost" id="nextTF" onclick="window.__tfNext()" style="display:none">Next →</button>
+      </div>
+    `;
+  }
+
+  window.__tfPick=(chosen)=>{
+    const correct=Qs[qi].a;
+    document.querySelectorAll('.tf-btn').forEach(b=>{ b.onclick=null; b.style.opacity='.4'; });
+    if(chosen===correct){
+      score++;
+      const btn=document.querySelector(chosen?'.tf-true':'.tf-false');
+      if(btn){ btn.style.opacity='1'; btn.style.borderColor='var(--green)'; btn.style.background='rgba(74,222,128,.15)'; }
+    } else {
+      const wrongBtn=document.querySelector(chosen?'.tf-true':'.tf-false');
+      const rightBtn=document.querySelector(correct?'.tf-true':'.tf-false');
+      if(wrongBtn){ wrongBtn.style.opacity='1'; wrongBtn.style.borderColor='var(--red)'; wrongBtn.style.background='rgba(248,113,113,.12)'; }
+      if(rightBtn){ rightBtn.style.opacity='1'; rightBtn.style.borderColor='var(--green)'; rightBtn.style.background='rgba(74,222,128,.1)'; }
+    }
+    $('explainTF').classList.add('show');
+    $('nextTF').style.display='inline-flex';
+  };
+
+  window.__tfNext=()=>{ qi++; render(); };
+
+  function showEnd(){
+    $('mBody').innerHTML=`
+      <div style="text-align:center;padding:2rem 1rem">
+        <div style="font-size:4rem;margin-bottom:1rem">${score>=Qs.length*.8?'🎓':score>=6?'👍':'📚'}</div>
+        <h2 style="font-family:var(--font-d);font-size:1.6rem;font-weight:800;margin-bottom:.5rem">You scored ${score} / ${Qs.length}!</h2>
+        <p style="color:var(--muted);margin-bottom:2rem">${score===Qs.length?'Perfect score — you really know your CS concepts!':score>=8?'Great job! A few more rounds and you\'ll ace this.':'Keep going — every wrong answer is a lesson!'}</p>
+        <button class="btn btn-green" onclick="initTF()">Play Again</button>
+        <button class="btn btn-ghost" onclick="closeGame()" style="margin-left:.8rem">Close</button>
+      </div>`;
+  }
+
+  render();
+}
+
+
+// ══════════════════════════════════════════════════════
+// GAME 4 — SPOT THE BUG
+// ══════════════════════════════════════════════════════
+function initBug(){
+  $('mTitle').textContent='🐛 Spot the Bug';
+
+  const BUGS=[
+    {
+      title:'This code tries to print numbers 1 to 5',
+      code:`<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">0</span>, <span class="num">5</span>):\n    print(i)`,
+      problem:'It prints 0 to 4, not 1 to 5. The range is off.',
+      options:['range(0, 5)','range(1, 6)','range(1, 5)','range(0, 6)'],
+      answer:'range(1, 6)',
+      explain:'range(1, 6) gives 1, 2, 3, 4, 5 — starting at 1 and stopping BEFORE 6.',
+    },
+    {
+      title:'This function should return the sum of two numbers',
+      code:`<span class="kw">def</span> <span class="fn">add</span>(a, b):\n    result = a + b`,
+      problem:'The function calculates the sum but never returns it!',
+      options:['result = a - b','return result','print(result)','def add(a, b, c):'],
+      answer:'return result',
+      explain:'Without return, the function does the math but throws it away. return result sends the value back to whoever called the function.',
+    },
+    {
+      title:'This code checks if a student passed (score ≥ 50)',
+      code:`score = <span class="num">75</span>\n<span class="kw">if</span> score = <span class="num">50</span>:\n    print(<span class="str">"Passed"</span>)`,
+      problem:'Single = is assignment, not comparison!',
+      options:['score = 75','if score == 50:','if score >= 50:','print("Passed")'],
+      answer:'if score >= 50:',
+      explain:'= assigns a value. == checks if two values are equal. And we also need >= to mean "50 or more", not just exactly 50.',
+    },
+    {
+      title:'This should print each fruit in the list',
+      code:`fruits = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"mango"</span>]\n<span class="kw">for</span> fruit <span class="kw">in</span> Fruits:\n    print(fruit)`,
+      problem:'Variable names are case-sensitive — Fruits ≠ fruits.',
+      options:['for Fruit in fruits:','for fruit in fruits:','for fruit in Fruits:','print(Fruits)'],
+      answer:'for fruit in fruits:',
+      explain:'Python is case-sensitive. The list is called fruits (lowercase f) but the loop says Fruits — they\'re treated as two different names.',
+    },
+    {
+      title:'This should keep asking until user types "stop"',
+      code:`<span class="kw">while</span> <span class="kw">True</span>:\n    answer = input(<span class="str">"Type stop to exit: "</span>)\n    <span class="kw">if</span> answer == <span class="str">"stop"</span>:\n        <span class="cm">pass</span>`,
+      problem:'"pass" does nothing — the loop never actually stops.',
+      options:['while False:','pass','break','continue'],
+      answer:'break',
+      explain:'break exits the loop immediately. pass is a no-op (does nothing). Without break, the loop runs forever even when the user types "stop".',
+    },
+    {
+      title:'This tries to add 5 to a user\'s input',
+      code:`num = input(<span class="str">"Enter a number: "</span>)\nresult = num + <span class="num">5</span>\nprint(result)`,
+      problem:'input() always returns a String — you can\'t add a number to text.',
+      options:['num = input()', 'result = num + 5', 'num = int(input(...))', 'print(result)'],
+      answer:'num = int(input(...))',
+      explain:'input() gives you a string like "7", not the number 7. Wrap it in int() to convert it: int(input("Enter a number: "))',
+    },
+  ];
+
+  let qi=0, score=0;
+  const Qs=[...BUGS].sort(()=>Math.random()-.5);
+
+  function render(){
+    if(qi>=Qs.length){ showEnd(); return; }
+    const q=Qs[qi];
+    $('mBody').innerHTML=`
+      <div class="teach-box">
+        <strong>📖 What is Debugging?</strong>
+        Every programmer writes bugs — mistakes in code. Debugging is the skill of finding and fixing them. Read the code below and pick the correct fix!
+      </div>
+      <div class="score-row">
+        <span class="score-pill">Score: ${score} / ${Qs.length}</span>
+        <span class="score-pill">Bug ${qi+1} of ${Qs.length}</span>
+      </div>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:.5rem">🎯 Goal: <strong style="color:var(--text)">${q.title}</strong></p>
+      <div class="buggy-code">
+        <div class="bug-label">🐛 BUG INSIDE</div>
+        ${q.code}
+      </div>
+      <p style="font-size:.82rem;color:var(--red);margin-bottom:.8rem">⚠️ Problem: ${q.problem}</p>
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:.6rem">Which line fixes it?</p>
+      <div class="fix-options">
+        ${q.options.map((o,i)=>`
+          <div class="fix-btn" onclick="window.__bPick(this,'${o.replace(/'/g,"\\'")}')">
+            <span class="fix-letter">${String.fromCharCode(65+i)}</span>
+            <code>${o}</code>
+          </div>`).join('')}
+      </div>
+      <div class="explain-box" id="bugExplain">💡 ${q.explain}</div>
+      <div style="text-align:right;margin-top:1rem">
+        <button class="btn btn-ghost" id="nextBug" onclick="window.__bNext()" style="display:none">Next →</button>
+      </div>
+    `;
+  }
+
+  window.__bPick=(el, chosen)=>{
+    const correct=Qs[qi].answer;
+    document.querySelectorAll('.fix-btn').forEach(b=>b.onclick=null);
+    if(chosen===correct){
+      score++;
+      el.classList.add('correct-fix');
+    } else {
+      el.classList.add('wrong-fix');
+      document.querySelectorAll('.fix-btn').forEach(b=>{ if(b.querySelector('code').textContent===correct) b.classList.add('correct-fix'); });
+    }
+    $('bugExplain').classList.add('show');
+    $('nextBug').style.display='inline-flex';
+  };
+
+  window.__bNext=()=>{ qi++; render(); };
+
+  function showEnd(){
+    $('mBody').innerHTML=`
+      <div style="text-align:center;padding:2rem 1rem">
+        <div style="font-size:4rem;margin-bottom:1rem">${score>=Qs.length*.8?'🔍':score>=4?'👍':'🐛'}</div>
+        <h2 style="font-family:var(--font-d);font-size:1.6rem;font-weight:800;margin-bottom:.5rem">You fixed ${score} / ${Qs.length} bugs!</h2>
+        <p style="color:var(--muted);margin-bottom:2rem">${score===Qs.length?'You\'re a debugging pro!':score>=4?'Not bad — you\'ve got a good eye for bugs!':'Debugging takes practice — keep at it!'}</p>
+        <button class="btn btn-orange" onclick="initBug()">Play Again</button>
+        <button class="btn btn-ghost" onclick="closeGame()" style="margin-left:.8rem">Close</button>
+      </div>`;
+  }
+
+  render();
+}
+</script>
+</body>
+</html>

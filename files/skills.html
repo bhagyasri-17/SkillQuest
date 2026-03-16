@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn a Skill – SkillQuest</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">Skill<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="grades.html">Grades</a>
+      <a href="skills.html" style="color:#60a5fa">Skills</a>
+      <a href="internships.html">Internships</a>
+      <a href="gamelearn.html">Game Lab</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div class="card-skills-icon"><i class="fas fa-code"></i></div>
+      <div>
+        <h1 style="color:#60a5fa">Skill <span style="color:#f0eff5">Roadmaps</span></h1>
+        <p>Pick a skill and get a clear, phase-by-phase learning path.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="skill-form-row" style="max-width:620px">
+      <div class="form-group" style="flex:1">
+        <label>Choose the skill you want to learn</label>
+        <select class="styled-select" id="skillSelect" onchange="showRoadmap()">
+          <option value="">-- Pick a skill --</option>
+          <option value="dsa">Data Structures & Algorithms (DSA)</option>
+          <option value="webdev">Web Development (Full Stack)</option>
+          <option value="ml">Machine Learning & AI</option>
+          <option value="devops">DevOps & Cloud</option>
+          <option value="android">Android Development</option>
+          <option value="cybersec">Cybersecurity</option>
+          <option value="sql">SQL & Databases</option>
+          <option value="git">Git & Open Source</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Default state -->
+    <div id="skillDefault" style="margin-top:3rem;text-align:center;color:var(--muted)">
+      <div style="font-size:3.5rem;margin-bottom:1rem;opacity:0.3">🗺️</div>
+      <p style="font-size:0.95rem">Select a skill above to see your personalized roadmap</p>
+    </div>
+
+    <!-- Roadmap output -->
+    <div class="roadmap-output" id="roadmapOutput">
+      <div id="roadmapMeta"></div>
+      <div class="roadmap-phases" id="roadmapPhases"></div>
+      <div id="roadmapFooter" style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);border-left:3px solid #60a5fa;border-radius:var(--radius);padding:1.2rem 1.5rem;font-size:0.88rem;color:var(--muted);"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>SkillQuest • Built for students, by students</p>
+  </footer>
+
+  <style>
+    .card-skills-icon {
+      width: 52px; height: 52px;
+      background: rgba(96,165,250,0.12);
+      color: #60a5fa;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+  </style>
+
+  <script src="skills.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Internships – SkillQuest</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">Skill<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="grades.html">Grades</a>
+      <a href="skills.html">Skills</a>
+      <a href="internships.html" style="color:#f97316">Internships</a>
+      <a href="gamelearn.html">Game Lab</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div class="intern-header-icon"><i class="fas fa-briefcase"></i></div>
+      <div>
+        <h1 style="color:#f97316">Fresher <span style="color:#f0eff5">Internships</span></h1>
+        <p>Curated opportunities and top platforms to kickstart your career.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="max-width:1100px">
+
+    <div class="internship-intro">
+      <strong style="color:var(--text)">🎯 How to use this page:</strong> Browse sample internship listings below to get a feel for what's out there.
+      Click "Apply Now" to go directly to the official listing. Scroll down for the best platforms to search more opportunities on your own.
+    </div>
+
+    <!-- Filter -->
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center">
+      <div class="form-group" style="margin-bottom:0">
+        <select class="styled-select" id="domainFilter" onchange="filterInternships()" style="width:220px">
+          <option value="all">All Domains</option>
+          <option value="webdev">Web Development</option>
+          <option value="ml">ML / AI</option>
+          <option value="mobile">Mobile Dev</option>
+          <option value="data">Data Analytics</option>
+          <option value="design">UI/UX Design</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <select class="styled-select" id="typeFilter" onchange="filterInternships()" style="width:180px">
+          <option value="all">All Types</option>
+          <option value="remote">Remote</option>
+          <option value="onsite">On-site</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+      </div>
+      <span style="color:var(--muted);font-size:0.82rem" id="resultCount"></span>
+    </div>
+
+    <!-- Internship Cards -->
+    <div class="section-label">Featured Listings (Representative Examples)</div>
+    <div class="internship-grid" id="internshipGrid"></div>
+
+    <!-- Platforms -->
+    <div class="section-label" style="margin-top:3rem">Top Platforms to Find More Internships</div>
+    <div class="platforms-grid">
+      <a href="https://internshala.com" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(249,115,22,0.1);color:#f97316">🎓</div>
+        <div class="platform-info">
+          <h4>Internshala</h4>
+          <p>India's #1 fresher internship platform</p>
+        </div>
+      </a>
+      <a href="https://www.linkedin.com/jobs/internship-jobs/" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(96,165,250,0.1);color:#60a5fa">💼</div>
+        <div class="platform-info">
+          <h4>LinkedIn Jobs</h4>
+          <p>Global network + job/internship listings</p>
+        </div>
+      </a>
+      <a href="https://unstop.com" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(167,139,250,0.1);color:#a78bfa">⚡</div>
+        <div class="platform-info">
+          <h4>Unstop</h4>
+          <p>Competitions, hackathons & internships</p>
+        </div>
+      </a>
+      <a href="https://wellfound.com/jobs" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(74,222,128,0.1);color:#4ade80">🚀</div>
+        <div class="platform-info">
+          <h4>Wellfound</h4>
+          <p>Startup internships and entry-level roles</p>
+        </div>
+      </a>
+      <a href="https://www.naukri.com/internship-jobs" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(249,115,22,0.1);color:#f97316">🔍</div>
+        <div class="platform-info">
+          <h4>Naukri</h4>
+          <p>Large job board with internship filters</p>
+        </div>
+      </a>
+      <a href="https://letsgrowmore.in" target="_blank" class="platform-card">
+        <div class="platform-icon" style="background:rgba(232,213,176,0.1);color:#e8d5b0">🌱</div>
+        <div class="platform-info">
+          <h4>LetsGrowMore</h4>
+          <p>Free virtual internship programs</p>
+        </div>
+      </a>
+    </div>
+
+    <div style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);border-left:3px solid #f97316;border-radius:var(--radius);padding:1.2rem 1.5rem;font-size:0.88rem;color:var(--muted);">
+      <strong style="color:var(--text)">💡 Pro Tips for Freshers</strong>
+      <ul style="margin-top:0.5rem;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.4rem">
+        <li>Keep your LinkedIn profile updated with projects and skills before applying</li>
+        <li>Apply to 10–15 internships per week — volume matters when you're starting out</li>
+        <li>Look for "stipend + certificate" internships to build your resume quickly</li>
+        <li>Check company pages directly — many don't post on job boards</li>
+        <li>A strong GitHub profile can substitute for work experience in tech</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>SkillQuest • Built for students, by students</p>
+  </footer>
+
+  <style>
+    .intern-header-icon {
+      width: 52px; height: 52px;
+      background: rgba(249,115,22,0.12);
+      color: #f97316;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+  </style>
+
+  <script src="internships.js"></script>
+</body>
+</html>

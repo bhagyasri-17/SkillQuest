@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Good Grades – SkillQuest</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">Skill<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="grades.html" style="color:#4ade80">Grades</a>
+      <a href="skills.html">Skills</a>
+      <a href="internships.html">Internships</a>
+      <a href="gamelearn.html">Game Lab</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div class="card-icon card-grades-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <h1 style="color:#4ade80">Study Schedule <span style="color:#f0eff5">Planner</span></h1>
+        <p>Tell us your availability and we'll build your personalized weekly schedule.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="form-box" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;max-width:600px">
+
+      <div class="form-group">
+        <label>How many hours can you study per day (outside college)?</label>
+        <select class="styled-select" id="hoursPerDay">
+          <option value="">Select hours</option>
+          <option value="1">1 hour</option>
+          <option value="2">2 hours</option>
+          <option value="3">3 hours</option>
+          <option value="4">4 hours</option>
+          <option value="5">5 hours</option>
+          <option value="6">6 hours</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>How many days per week can you study?</label>
+        <select class="styled-select" id="daysPerWeek">
+          <option value="">Select days</option>
+          <option value="3">3 days/week</option>
+          <option value="4">4 days/week</option>
+          <option value="5">5 days/week</option>
+          <option value="6">6 days/week</option>
+          <option value="7">7 days/week (everyday)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>What's your primary academic goal right now?</label>
+        <select class="styled-select" id="goal">
+          <option value="">Select goal</option>
+          <option value="exams">Prepare for upcoming exams</option>
+          <option value="assignments">Clear pending assignments & projects</option>
+          <option value="cgpa">Improve CGPA overall</option>
+          <option value="balance">Balance academics + coding/skills</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Your preferred study time</label>
+        <select class="styled-select" id="prefTime">
+          <option value="">Select preference</option>
+          <option value="morning">Morning (6am – 10am)</option>
+          <option value="afternoon">Afternoon (12pm – 4pm)</option>
+          <option value="evening">Evening (6pm – 10pm)</option>
+          <option value="night">Night (10pm – 12am)</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="generateSchedule()">
+        <i class="fas fa-calendar-check"></i> Generate My Schedule
+      </button>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="schedule-output" id="scheduleOutput" style="display:none">
+      <div class="schedule-header">
+        <h3>Your Weekly Study Plan</h3>
+        <button onclick="resetSchedule()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:0.4rem 1rem;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:0.8rem">Reset</button>
+      </div>
+      <div class="schedule-stats" id="scheduleStats"></div>
+      <table class="schedule-table" id="scheduleTable">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Time Slot</th>
+            <th>Session</th>
+            <th>Duration</th>
+            <th>Focus</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+
+      <div style="margin-top:1.5rem;background:var(--surface);border:1px solid var(--border);border-left:3px solid #4ade80;border-radius:var(--radius);padding:1.2rem 1.5rem;font-size:0.88rem;color:var(--muted);">
+        <strong style="color:var(--text)">💡 Study Tips</strong>
+        <ul style="margin-top:0.5rem;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.3rem" id="studyTips"></ul>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>SkillQuest •  Built for students, by students</p>
+  </footer>
+
+  <style>
+    .card-grades-icon {
+      width: 52px; height: 52px;
+      background: rgba(74,222,128,0.12);
+      color: #4ade80;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+  </style>
+
+  <script src="main.js"></script>
+  <script src="grades.js"></script>
+</body>
+</html>
